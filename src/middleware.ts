@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server";
+
 import type { NextRequest } from "next/server";
 
 export function middleware(request: NextRequest) {
   const authCookie = request.cookies.get("auth");
-  const userCookie = request.cookies.get("user");
 
-  const protectedRoutes = ["/dashboard", "/account"];
-
-  if (
-    !authCookie &&
-    protectedRoutes.some((route) => request.nextUrl.pathname.startsWith(route))
-  ) {
+  if (!authCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
   return NextResponse.next();
 }
 
-export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
-};
+export const config = { matcher: ["/dashboard/:path*", "/account/:path*"] };

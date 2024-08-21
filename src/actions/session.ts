@@ -33,11 +33,10 @@ const validateFields = (formData: FormData) => {
 const setCookiesFromResponse = (response: Response) => {
   const cookieStore = cookies();
   const cookieHeader = response.headers.get("set-cookie");
-
   if (cookieHeader) {
     // backend is sending signed cookies altogether in one header
-    const cookiesPairs = cookieTools.parseSignedHeader(cookieHeader, "user");
-    for (const [key, options] of Object.entries(cookiesPairs)) {
+    const parsedCookies = cookieTools.parseSignedHeader(cookieHeader, "user");
+    for (const [key, options] of Object.entries(parsedCookies)) {
       cookieStore.set(key, options.value, options);
     }
   }
@@ -59,7 +58,7 @@ export async function createSession(
 
   try {
     const response = await fetch(
-      `${API.AETHER.v1.HOST}${API.AETHER.v1.SESSION_CREATE}`,
+      `${API.CMS.HOST}${API.CMS.USER.ENDPOINT_SESSION_CREATE}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

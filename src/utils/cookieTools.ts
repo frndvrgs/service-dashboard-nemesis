@@ -13,6 +13,29 @@ interface ParsedCookies {
   [key: string]: CookieOptions;
 }
 
+const unsignCookieValue = (value: string): string | boolean => {
+  const secret = process.env.COOKIE_SECRET;
+  if (!secret) return false;
+  return cookieSignature.unsign(value, secret);
+};
+
+// client / browser side
+const getCookie = (name: string): string | null => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  const nameEQ = name + "=";
+  const ca = document.cookie.split(";");
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === " ") c = c.substring(1, c.length);
+    if (c.indexOf(nameEQ) === 0)
+      return decodeURIComponent(c.substring(nameEQ.length, c.length));
+  }
+  return null;
+};
+
 const parseCookieString = (
   cookieString: string,
   userCookieName?: string,
@@ -84,29 +107,6 @@ const parseSignedHeader = (
       parseCookieString(cookieString, userCookieName),
     ),
   );
-};
-
-const unsignCookieValue = (value: string): string | boolean => {
-  const secret = process.env.COOKIE_SECRET;
-  if (!secret) return false;
-  return cookieSignature.unsign(value, secret);
-};
-
-// client / browser side
-const getCookie = (name: string): string | null => {
-  if (typeof window === "undefined") {
-    return null;
-  }
-
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(";");
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === " ") c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0)
-      return decodeURIComponent(c.substring(nameEQ.length, c.length));
-  }
-  return null;
 };
 
 export const cookieTools = {

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ASCIIArtProps {
   art: string;
@@ -6,8 +6,6 @@ interface ASCIIArtProps {
 
 export const ASCIIArt: React.FC<ASCIIArtProps> = ({ art }) => {
   return (
-    <pre className="font-mono text-xl leading-none whitespace-pre">
-      {art}
-    </pre>
+    <pre className="font-mono text-xs leading-none whitespace-pre">{art}</pre>
   );
 };
